@@ -38,3 +38,45 @@ And finally, start the web server:
 ```bash
 mix phx.server
 ```
+
+## Building and Deploying
+
+Before you build anything, make sure you bump the version in `mix.exs`.
+
+There is a convenience script included to assist in building the release target. All
+you need to do to build is run:
+
+```bash
+./build.sh
+```
+
+This will build a docker image, load the code, and then do all the fetching
+and compiling needed. It will then copy the release archive to your host machine
+under the `_build/prod` directory.
+
+To deploy the application, you will need to `scp` it to the remote server and then
+run a few commands to update the running version:
+
+```bash
+# local
+scp _build/prod/node_monitor-VERSION remote-machine:releases/
+ssh remote-machine
+
+## on the remote machine
+# decompress the archive
+cd releases
+tar xzf node_monitor-VERSION.tar.gz
+rm node_monitor-VERSION.tar.gz
+cd ..
+
+# stop the running version and update the link
+./node_monitor/bin/node_monitor stop
+unlink node_monitor
+ln -s releases/VERSION node_monitor
+
+# if you need to run migrations, do it now
+./node_monitor/bin/node_monitor migrate
+
+# start up the new version
+./node_monitor/bin/node_monitor start
+```
