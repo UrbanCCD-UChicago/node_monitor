@@ -1,0 +1,106 @@
+<h1>Node Overview</h1>
+
+<p>
+  <%= @count_all_nodes %> live nodes
+</p>
+
+<hr>
+
+<h2>Boot Events</h2>
+
+<ul>
+  <li>
+    <%= Enum.count(@too_many_reboots) %> nodes have rebooted more than once in the last 4 hours 
+    <br><%= for {node_id, _} <- @too_many_reboots do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@too_many_media_changes) %> nodes have changed their boot media more than twice in the last 4 hours 
+    <br><%= for {node_id, _, _} <- @too_many_media_changes do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@no_recent_boot_events) %> nodes have not sent a boot record (http event) in the last 4 hours 
+    <br><%= for node_id <- @no_recent_boot_events do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@no_boot_events) %> nodes have never sent a boot record (http event) 
+    <br><%= for node_id <- @no_boot_events do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+</ul>
+
+<hr>
+
+<h2>Data Quality Logs</h2>
+
+<ul>
+  <li>
+    <%= Enum.count(@too_few_sensors) %> nodes have reported less than 14 sensors at least 12 times (totalling an hour) in the last 4 hours 
+    <br><%= for {node_id, _} <- @too_few_sensors do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@ratio_too_low) %> nodes have reported a valid data ratio less than 80% at least 12 times (totalling an hour) in the last 4 hours 
+    <br><%= for {node_id, _} <- @ratio_too_low do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@not_enough_data) %> nodes have not reported a sufficient total amount of data at least 12 times (totalling an hour) in the last 4 hours 
+    <br><%= for {node_id, _} <- @not_enough_data do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@no_recent_data_logs) %> nodes have not had a data log computed in the last 4 hours
+    <br><%= for node_id <- @no_recent_data_logs do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@no_data_logs) %> nodes have never had a data log computed
+    <br><%= for node_id <- @no_data_logs do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+</ul>
+
+<hr>
+
+<h2>Status Logs</h2>
+
+<ul>
+  <li>
+    <%= Enum.count(@nc_time_drift) %> nodes have a node controller whose epoch is off by at least 1 minute 
+    <br><%= for {node_id, _} <- @nc_time_drift do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@ep_time_drift) %> nodes have an edge processor whose epoch is off by at least 1 minute 
+    <br><%= for {node_id, _} <- @ep_time_drift do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@nc_uptime_too_short) %> nodes have a node controller with a reported uptime being less than 5 minutes at least once in the last 4 hours 
+    <br><%= for {node_id, _} <- @nc_uptime_too_short do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@ep_uptime_too_short) %> nodes have an edge processor with a reported uptime being less than 5 minutes at least once in the last 4 hours
+    <br><%= for {node_id, _} <- @ep_uptime_too_short do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@wm_uptime_too_short) %> nodes have a wagman with a reported uptime being less than 5 minutes at least once in the last 4 hours
+    <br><%= for {node_id, _} <- @wm_uptime_too_short do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@cs_uptime_too_short) %> nodes have a coresense with a reported uptime being less than 5 minutes at least once in the last 4 hours
+    <br><%= for {node_id, _} <- @cs_uptime_too_short do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@bcam_uptime_too_short) %> nodes have a bottom camera with a reported uptime being less than 5 minutes at least once in the last 4 hours
+    <br><%= for {node_id, _} <- @bcam_uptime_too_short do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@tcam_uptime_too_short) %> nodes have a top camera with a reported uptime being less than 5 minutes at least once in the last 4 hours
+    <br><%= for {node_id, _} <- @tcam_uptime_too_short do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@mic_uptime_too_short) %> nodes have a microphone with a reported uptime being less than 5 minutes at least once in the last 4 hours
+    <br><%= for {node_id, _} <- @mic_uptime_too_short do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@no_recent_status_logs) %> nodes have not had a status log computed in the last 4 hours 
+    <br><%= for node_id <- @no_recent_status_logs do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+  <li>
+    <%= Enum.count(@no_status_logs) %> nodes have never had a status log computed 
+    <br><%= for node_id <- @no_status_logs do %><a href="<%= Routes.nodes_path(@conn, :show, node_id) %>"><%= node_id %></a>, <% end %>
+  </li>
+</ul>

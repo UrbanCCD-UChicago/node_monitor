@@ -1,0 +1,298 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0/dist/Chart.min.js" 
+  integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" 
+  crossorigin="anonymous"></script>
+
+<h1>Node <%= @node.id %></h1>
+
+<p>
+  <strong>ID:</strong> <%= @node.id %> &nbsp;&nbsp;&nbsp;
+  <strong>VSN:</strong> <%= @node.vsn %> &nbsp;&nbsp;&nbsp;
+  <strong>Address:</strong> <%= @node.address %> &nbsp;&nbsp;&nbsp;
+  <strong>Location:</strong> <%= @node.lon %>, <%= @node.lat %> &nbsp;&nbsp;&nbsp;
+  <strong>Description:</strong> <%= @node.description %>
+</p>
+
+
+<h2 style="margin-top: 3rem">Latest Data Log</h2>
+
+<%= if @latest_data_log do %>
+<p>
+  <strong>Timestamp:</strong> <%= @latest_data_log.timestamp %> &nbsp;&nbsp;&nbsp;
+  <strong>Unique Sensors:</strong> <%= @latest_data_log.data_unique_sensors %> &nbsp;&nbsp;&nbsp;
+  <strong>Total Data:</strong> <%= @latest_data_log.data_total %> &nbsp;&nbsp;&nbsp;
+  <strong>Valid Data:</strong> <%= @latest_data_log.data_valid_total %> &nbsp;&nbsp;&nbsp;
+  <strong>Valid Data Ratio:</strong> <%= @latest_data_log.data_valid_ratio %> &nbsp;&nbsp;&nbsp;
+</p>
+
+<h3>Valid Data Ratio</h3>
+
+<canvas id="ratio" height="50"></canvas>
+
+<script>
+let ratioCtx = document.getElementById('ratio').getContext('2d');
+let ratioChart = new Chart(ratioCtx, {
+  type: 'line',
+  data: {
+    labels: <%= raw @data_log_labels %>,
+    datasets: [{
+      label: 'Valid Data Ratio',
+      data: <%= @data_log_ratio %>,
+      backgroundColor: ['rgba(153, 102, 255, 0.2)'],
+      borderColor: ['rgba(153, 102, 255, 1)']
+    }]
+  }
+});
+</script>
+
+<h3 style="margin-top: 2rem">Sensors</h3>
+
+<canvas id="sensors" height="50"></canvas>
+
+<script>
+let sensorCtx = document.getElementById('sensors').getContext('2d');
+let sensorChart = new Chart(sensorCtx, {
+  type: 'line',
+  data: {
+    labels: <%= raw @data_log_labels %>,
+    datasets: [{
+      label: 'Sensors',
+      data: <%= @data_log_sensors %>,
+      backgroundColor: ['rgba(153, 102, 255, 0.2)'],
+      borderColor: ['rgba(153, 102, 255, 1)'],
+      fill: false
+    }]
+  }
+});
+</script>
+
+<h3 style="margin-top: 2rem">Valid Data Total</h3>
+
+<canvas id="validData" height="50"></canvas>
+
+<script>
+let validDataCtx = document.getElementById('validData').getContext('2d');
+let validDataChart = new Chart(validDataCtx, {
+  type: 'line',
+  data: {
+    labels: <%= raw @data_log_labels %>,
+    datasets: [{
+      label: 'Valid Data',
+      data: <%= @data_log_valid %>,
+      backgroundColor: ['rgba(153, 102, 255, 0.2)'],
+      borderColor: ['rgba(153, 102, 255, 1)'],
+      fill: false
+    }]
+  }
+});
+</script>
+
+<% else %>
+<p>No reported data logs :(</p>
+<% end %>
+
+
+<h2 style="margin-top: 5rem">Latest Status Log</h2>
+
+<%= if @latest_status_log do %>
+<p>
+  <strong>Timestamp:</strong> <%= @latest_status_log.timestamp %>
+</p>
+<p>
+  <strong>NC Epoch:</strong> <%= @latest_status_log.epoch_nc %> &nbsp;&nbsp;&nbsp;
+  <strong>NC Epoch:</strong> <%= @latest_status_log.epoch_ep %>
+</p>
+<p>
+  <strong>Wagman System Uptime:</strong> <%= @latest_status_log.up_wm_sys %>
+</p>
+<p>
+  <strong>Network Usage:</strong> <%= @latest_status_log.net_wwan %>
+</p>
+<p>
+  <strong>NC System Uptime:</strong> <%= @latest_status_log.up_nc_sys %> &nbsp;&nbsp;&nbsp;
+  <strong>NC Wagman Uptime:</strong> <%= @latest_status_log.up_nc_wm %> &nbsp;&nbsp;&nbsp;
+  <strong>NC Coresense Uptime:</strong> <%= @latest_status_log.up_nc_cs %> &nbsp;&nbsp;&nbsp;
+  <strong>NC WWAN Uptime:</strong> <%= @latest_status_log.up_nc_wwan %> &nbsp;&nbsp;&nbsp;
+  <strong>NC LAN Uptime:</strong> <%= @latest_status_log.up_nc_lan %> &nbsp;&nbsp;&nbsp;
+  <strong>NC Microphone Uptime:</strong> <%= @latest_status_log.up_nc_mic %> &nbsp;&nbsp;&nbsp;
+  <strong>Coresense Bootloader Error:</strong> <%= @latest_status_log.up_nc_samba %>
+</p>
+<p>
+  <strong>EP System Uptime:</strong> <%= @latest_status_log.up_ep_sys %> &nbsp;&nbsp;&nbsp;
+  <strong>EP Bottom Camera Uptime:</strong> <%= @latest_status_log.up_ep_bcam %> &nbsp;&nbsp;&nbsp;
+  <strong>EP Top Camera Uptime:</strong> <%= @latest_status_log.up_ep_tcam %> &nbsp;&nbsp;&nbsp;
+  <strong>EP Microphone Uptime:</strong> <%= @latest_status_log.up_ep_mic %>
+</p>
+<p>
+  <strong>NC running RabbitMQ:</strong> <%= @latest_status_log.run_nc_rabbitmq %> &nbsp;&nbsp;&nbsp;
+  <strong>EP running RabbitMQ:</strong> <%= @latest_status_log.run_ep_rabbitmq %> &nbsp;&nbsp;&nbsp;
+  <strong>NC running Coresense:</strong> <%= @latest_status_log."run_nc_cs-plugin" %>
+</p>
+<p>
+  <strong>NC Fail Count:</strong> <%= @latest_status_log.fc_nc %> &nbsp;&nbsp;&nbsp;
+  <strong>EP Fail Count:</strong> <%= @latest_status_log.fc_ep %> &nbsp;&nbsp;&nbsp;
+  <strong>Coresense Fail Count:</strong> <%= @latest_status_log.fc_cs %>
+</p>
+<p>
+  <strong>NC Enabled:</strong> <%= @latest_status_log.en_nc %> &nbsp;&nbsp;&nbsp;
+  <strong>EP Enabled:</strong> <%= @latest_status_log.en_ep %> &nbsp;&nbsp;&nbsp;
+  <strong>Coresense Enabled:</strong> <%= @latest_status_log.en_cs %>
+</p>
+<p>
+  <strong>NC Heart Beat:</strong> <%= @latest_status_log.hb_nc %> &nbsp;&nbsp;&nbsp;
+  <strong>EP Heart Beat:</strong> <%= @latest_status_log.hb_ep %> &nbsp;&nbsp;&nbsp;
+  <strong>Coresense Heart Beat:</strong> <%= @latest_status_log.hb_cs %>
+</p>
+<p>
+  <strong>NC Current Usage:</strong> <%= @latest_status_log.cu_nc %> &nbsp;&nbsp;&nbsp;
+  <strong>EP Current Usage:</strong> <%= @latest_status_log.cu_ep %> &nbsp;&nbsp;&nbsp;
+  <strong>Coresense Current Usage:</strong> <%= @latest_status_log.cu_cs %> &nbsp;&nbsp;&nbsp;
+  <strong>Wagman Current Usage:</strong> <%= @latest_status_log.cu_wm %>
+</p>
+
+<h3 style="margin-top: 2rem">System Uptimes</h3>
+
+<canvas id="up_wm_sys" height="50"></canvas>
+
+<script>
+let up_wm_sysCtx = document.getElementById('up_wm_sys').getContext('2d');
+let up_wm_sysChart = new Chart(up_wm_sysCtx, {
+  type: 'line',
+  data: {
+    labels: <%= raw @status_log_labels %>,
+    datasets: [{
+      label: 'Node Controller',
+      data: <%= @nc_uptime %>,
+      backgroundColor: ['rgba(153, 102, 255, 0.2)'],
+      borderColor: ['rgba(153, 102, 255, 1)'],
+      fill: false
+    }, {
+      label: 'Edge Processor',
+      data: <%= @ep_uptime %>,
+      backgroundColor: ['rgba(54, 162, 235, 0.2)'],
+      borderColor: ['rgba(54, 162, 235, 1)'],
+      fill: false
+    }, {
+      label: 'Wagman',
+      data: <%= @wm_uptime %>,
+      backgroundColor: ['rgba(255, 206, 86, 0.2)'],
+      borderColor: ['rgba(255, 206, 86, 1)'],
+      fill: false
+    }, {
+      label: 'Coresense',
+      data: <%= @cs_uptime %>,
+      backgroundColor: ['rgba(75, 192, 192, 0.2)'],
+      borderColor: ['rgba(75, 192, 192, 1)'],
+      fill: false
+    }]
+  }
+});
+</script>
+
+<h3 style="margin-top: 2rem">Fail Counts</h3>
+
+<canvas id="fc" height="50"></canvas>
+
+<script>
+let fcCtx = document.getElementById('fc').getContext('2d');
+let fcChart = new Chart(fcCtx, {
+  type: 'line',
+  data: {
+    labels: <%= raw @status_log_labels %>,
+    datasets: [{
+      label: 'Node Controller',
+      data: <%= @nc_fail_counts %>,
+      backgroundColor: ['rgba(153, 102, 255, 0.2)'],
+      borderColor: ['rgba(153, 102, 255, 1)'],
+      fill: false
+    }, {
+      label: 'Edge Processor',
+      data: <%= @ep_fail_counts %>,
+      backgroundColor: ['rgba(54, 162, 235, 0.2)'],
+      borderColor: ['rgba(54, 162, 235, 1)'],
+      fill: false
+    }, {
+      label: 'Coresense',
+      data: <%= @cs_fail_counts %>,
+      backgroundColor: ['rgba(255, 206, 86, 0.2)'],
+      borderColor: ['rgba(255, 206, 86, 1)'],
+      fill: false
+    }]
+  }
+});
+</script>
+
+<h3 style="margin-top: 2rem">Usage</h3>
+
+<canvas id="cu" height="50"></canvas>
+
+<script>
+let cuCtx = document.getElementById('cu').getContext('2d');
+let cuChart = new Chart(cuCtx, {
+  type: 'line',
+  data: {
+    labels: <%= raw @status_log_labels %>,
+    datasets: [{
+      label: 'Node Controller',
+      data: <%= @nc_current_usage %>,
+      backgroundColor: ['rgba(153, 102, 255, 0.2)'],
+      borderColor: ['rgba(153, 102, 255, 1)'],
+      fill: false
+    }, {
+      label: 'Edge Processor',
+      data: <%= @ep_current_usage %>,
+      backgroundColor: ['rgba(54, 162, 235, 0.2)'],
+      borderColor: ['rgba(54, 162, 235, 1)'],
+      fill: false
+    }, {
+      label: 'Wagman',
+      data: <%= @wm_current_usage %>,
+      backgroundColor: ['rgba(255, 206, 86, 0.2)'],
+      borderColor: ['rgba(255, 206, 86, 1)'],
+      fill: false
+    }, {
+      label: 'Coresense',
+      data: <%= @cs_current_usage %>,
+      backgroundColor: ['rgba(75, 192, 192, 0.2)'],
+      borderColor: ['rgba(75, 192, 192, 1)'],
+      fill: false
+    }]
+  }
+});
+</script>
+
+<% else %>
+<p>No reported status logs :(</p>
+<% end %>
+
+
+<h2 style="margin-top: 5rem">Latest Boot Event</h2>
+
+<%= if @latest_boot_event do %>
+<p>
+  <strong>Timestamp:</strong> <%= @latest_boot_event.timestamp %> &nbsp;&nbsp;&nbsp;
+  <strong>Boot Media:</strong> <%= @latest_boot_event.media %> &nbsp;&nbsp;&nbsp;
+  <strong>Boot ID:</strong> <%= @latest_boot_event.boot_id %>
+</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Timestamp</th>
+      <th>Boot Media</th>
+      <th>Boot ID</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for b <- @boot_events do %>
+    <tr>
+      <td><%= b.timestamp %>
+      <td><%= b.media %>
+      <td><%= b.boot_id %>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% else %>
+<p>No recorded boot events :(</p>
+<% end %>

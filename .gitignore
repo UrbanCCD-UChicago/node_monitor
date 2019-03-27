@@ -1,0 +1,9 @@
+.elixir_ls/
+.vscode/
+_build/
+assets/node_modules/
+config/*.secret.exs
+deps/
+priv/static/
+*.ez
+*.dump

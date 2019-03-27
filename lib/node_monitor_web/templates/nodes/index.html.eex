@@ -1,0 +1,30 @@
+<h1><%= @count %> Nodes</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>VSN</th>
+      <th>Address</th>
+      <th>Location</th>
+      <th>Description</th>
+      <th>Latest Boot Timestamp</th>
+      <th>Latest Data Log Timestamp</th>
+      <th>Latest Status Log Timestamp</th>
+    </tr>
+  </thead>
+  <tbody>
+    <%= for n <- @nodes do %>
+    <tr>
+      <td><a href="<%= Routes.nodes_path(@conn, :show, n.id) %>"><%= n.id %></a></td>
+      <td><%= n.vsn %></td>
+      <td><%= n.address %></td>
+      <td><%= n.lon %>, <%= n.lat %></td>
+      <td><%= n.description %></td>
+      <td><%= n.bts %></td>
+      <td><%= n.dts %></td>
+      <td><%= n.sts %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
