@@ -42,6 +42,9 @@ defmodule NodeMonitorWeb do
       import NodeMonitorWeb.ErrorHelpers
       import NodeMonitorWeb.Gettext
       alias NodeMonitorWeb.Router.Helpers, as: Routes
+
+      def fmt_time(nil), do: ""
+      def fmt_time(%NaiveDateTime{} = t), do: Timex.format!(t, "%Y-%m-%d %H:%M:%S", :strftime)
     end
   end
 

@@ -21,9 +21,9 @@
       <td><%= n.address %></td>
       <td><%= n.lon %>, <%= n.lat %></td>
       <td><%= n.description %></td>
-      <td><%= n.bts %></td>
-      <td><%= n.dts %></td>
-      <td><%= n.sts %></td>
+      <td><%= fmt_time n.bts %></td>
+      <td><%= fmt_time n.dts %></td>
+      <td><%= fmt_time n.sts %></td>
     </tr>
     <% end %>
   </tbody>
