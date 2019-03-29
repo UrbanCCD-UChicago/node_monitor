@@ -79,6 +79,7 @@ defmodule NodeMonitorWeb.NodesController do
         LEFT JOIN latest_status_logs s ON n.id = s.node_id
       WHERE
         n.end_timestamp IS NULL
+      ORDER BY n.vsn ASC
       """
 
     cols =
@@ -247,6 +248,11 @@ defmodule NodeMonitorWeb.NodesController do
       |> Enum.map(& &1.data_valid_total)
       |> Jason.encode!()
 
+    data_log_data =
+      data_logs
+      |> Enum.map(& &1.data_total)
+      |> Jason.encode!()
+
     # status logs
     latest_status_log =
       (from l in LatestStatusLog)
@@ -335,6 +341,28 @@ defmodule NodeMonitorWeb.NodesController do
       |> Enum.map(& &1.cu_cs)
       |> Jason.encode!()
 
+    nc_rabbitmq =
+      status_logs
+      |> Enum.map(fn l ->
+        case l.run_nc_rabbitmq do
+          true -> 1
+          false -> 0
+          _ -> nil
+        end
+      end)
+      |> Jason.encode!()
+
+    ep_rabbitmq =
+      status_logs
+      |> Enum.map(fn l ->
+        case l.run_ep_rabbitmq do
+          true -> 1
+          false -> 0
+          _ -> nil
+        end
+      end)
+      |> Jason.encode!()
+
     # boot events
     latest_boot_event =
       (from b in LatestBootEvent)
@@ -355,6 +383,7 @@ defmodule NodeMonitorWeb.NodesController do
       data_log_sensors: data_log_sensors,
       data_log_ratio: data_log_ratio,
       data_log_valid: data_log_valid,
+      data_log_data: data_log_data,
       latest_status_log: latest_status_log,
       status_logs: status_logs,
       status_log_labels: status_log_labels,
@@ -372,6 +401,8 @@ defmodule NodeMonitorWeb.NodesController do
       ep_current_usage: ep_current_usage,
       wm_current_usage: wm_current_usage,
       cs_current_usage: cs_current_usage,
+      nc_rabbitmq: nc_rabbitmq,
+      ep_rabbitmq: ep_rabbitmq,
       latest_boot_event: latest_boot_event,
       boot_events: boot_events
   end
