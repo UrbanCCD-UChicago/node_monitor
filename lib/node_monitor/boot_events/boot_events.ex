@@ -15,23 +15,31 @@ defmodule NodeMonitor.BootEvents do
 
     latest_event = Repo.one!(from b in BootEvent, select: max(b.timestamp))
 
-    multi_insert =
+    {_, multi_insert} =
       path
       |> File.stream!()
       |> CSV.parse_stream()
-      |> Enum.reduce(Ecto.Multi.new(), fn [ts, node_id, bid, media], multi ->
+      |> Enum.reduce({MapSet.new(), Ecto.Multi.new()}, fn [ts, node_id, bid, media], {names, multi} ->
         timestamp = Timex.parse!(ts, "{ISO:Extended}")
 
         case is_nil(latest_event) or NaiveDateTime.compare(timestamp, latest_event) == :gt do
           false ->
-            multi
+            {names, multi}
 
           true ->
-            Ecto.Multi.insert(
-              multi,
-              "#{node_id}_#{ts}_#{bid}",
-              BootEvent.changeset(%BootEvent{}, %{node_id: node_id, timestamp: timestamp, boot_id: bid, media: media})
-            )
+            multi_step_name = "#{node_id}_#{ts}_#{bid}"
+            case MapSet.member?(names, multi_step_name) do
+              true ->
+                {names, multi}
+
+              false ->
+                names = MapSet.union(names, MapSet.new([multi_step_name]))
+                {names, Ecto.Multi.insert(
+                  multi,
+                  "#{node_id}_#{ts}_#{bid}",
+                  BootEvent.changeset(%BootEvent{}, %{node_id: node_id, timestamp: timestamp, boot_id: bid, media: media})
+                )}
+            end
         end
       end)
 

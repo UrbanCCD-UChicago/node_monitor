@@ -27,11 +27,11 @@ config :phoenix, :json_library, Jason
 
 # Configure import jobs
 config :node_monitor, NodeMonitor.Scheduler, jobs: [
-  {"*/5 * * * *", {NodeMonitor.Nodes, :load_recent_tarballs, []}},
+  {"*/10 * * * *", {NodeMonitor.Nodes, :load_recent_tarballs, []}},
 
-  {"*/30 * * * *", {NodeMonitor.BootEvents, :load_boot_events, []}},
-  {"*/5 * * * *", {NodeMonitor.DataLogs, :load_data_logs, []}},
-  {"0 * * * *", {NodeMonitor.DataLogs, :load_status_logs, []}},
+  {"*/10 * * * *", {NodeMonitor.BootEvents, :load_boot_events, []}},
+  {"*/10 * * * *", {NodeMonitor.DataLogs, :load_data_logs, []}},
+  {"*/10 * * * *", {NodeMonitor.DataLogs, :load_status_logs, []}},
 
   {"1 0 * * *", {NodeMonitor.TTL, :purge_old_boot_events, []}},
   {"1 0 * * *", {NodeMonitor.TTL, :purge_old_data_logs, []}},
